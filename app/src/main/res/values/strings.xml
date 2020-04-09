@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Barcode Buddy Scanner</string>
+    <string name="scan_barcode">Scan Barcode</string>
+    <string name="welcome">Welcome!</string>
+    <string name="tut_text">Let\'s connect to Barcode Buddy!\n\nPlease open Barcode Buddy, go to the API menu and click on the three dots in the top right corner, to select \"Add mobile app\". Then scan the displayed QR code.</string>
+    <string name="scan">Scan</string>
+    <string name="url">URL</string>
+    <string name="api">API</string>
+    <string name="connect">Connect</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="error_unex">Error: Unexpected response</string>
+    <string name="error">Error: </string>
+    <string name="e_invalidqr">Invalid QR code, no setup info found.</string>
+    <string name="error_too_old">Please update your Barcode Buddy server.</string>
+    <string name="tut_connected">Connected! Tap on the barcode picture to start scanning.</string>
+    <string name="error_cnc">\"Could not connect to server!</string>
+    <string name="tut_scan">Scan setup QR code</string>
+</resources>
