@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -16,11 +15,13 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.io.IOException;
 import java.util.List;
 
 import de.bulling.barcodebuddyscanner.Api.BBApi;
 import de.bulling.barcodebuddyscanner.Api.BBApiCallback;
 import de.bulling.barcodebuddyscanner.Helper.BeepManager;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 
@@ -64,33 +65,30 @@ public class ContinuousCaptureActivity extends Activity {
 			lastBarcode  = result.getText();
 			barcodeView.setStatusText(result.getText());
 			beepManager.playBeepSoundAndVibrate();
-			bbApi.postBarcode(result.getText(), new BBApiCallback() {
-				@Override
-				public void onResult(Object result) {
-					if (result instanceof String)
-						Toast.makeText(ContinuousCaptureActivity.this,
-								(String) result, Toast.LENGTH_SHORT).show();
-					else
-						Toast.makeText(ContinuousCaptureActivity.this,
-								R.string.error_unex, Toast.LENGTH_LONG).show();
-				}
 
-				@Override
-				public void onError(int errorCode, String errorMessage, Response<JsonElement> response) {
-					Toast.makeText(ContinuousCaptureActivity.this,
-							getString(R.string.error) + errorMessage,
-							Toast.LENGTH_LONG).show();
-					if (IS_DEBUG) {
-						String debugMessage = errorMessage + "\n";
-						if (response != null) {
-							debugMessage = debugMessage + "Received:\n" + response.raw().body();
-						}
-						Intent i = new Intent(ContinuousCaptureActivity.this, DebugActivity.class);
-						i.putExtra("debug", debugMessage);
-						ContinuousCaptureActivity.this.startActivity(i);
+			if (!IS_DEBUG) {
+				bbApi.postBarcode(result.getText(), new BBApiCallback() {
+					@Override
+					public void onResult(Object result) {
+						if (result instanceof String)
+							Toast.makeText(ContinuousCaptureActivity.this,
+									(String) result, Toast.LENGTH_SHORT).show();
+						else
+							Toast.makeText(ContinuousCaptureActivity.this,
+									R.string.error_unex, Toast.LENGTH_LONG).show();
 					}
-				}
-			});
+
+					@Override
+					public void onError(int errorCode, String errorMessage, Response<JsonElement> response) {
+						Toast.makeText(ContinuousCaptureActivity.this,
+								getString(R.string.error) + errorMessage,
+								Toast.LENGTH_LONG).show();
+					}
+				});
+			} else {
+				doDebugScan(result.getText());
+			}
+
 
 		}
 
@@ -102,20 +100,47 @@ public class ContinuousCaptureActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
 		barcodeView.resume();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-
 		barcodeView.pause();
 	}
 
+	private void doDebugScan(String barcode) {
+		bbApi.postBarcodeDebug(barcode, new BBApiCallback() {
+			@Override
+			public void onResult(Object result) {
+				Response<ResponseBody> response     = (Response<ResponseBody>) result;
+				String                 debugMessage = "Received:\n\n'";
+				try {
+					debugMessage = debugMessage + response.body().string() + "'";
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				Intent i = new Intent(ContinuousCaptureActivity.this, DebugActivity.class);
+				i.putExtra("debug", debugMessage);
+				ContinuousCaptureActivity.this.startActivity(i);
+			}
 
-	public void triggerScan(View view) {
-		barcodeView.decodeSingle(callback);
+			@Override
+			public void onError(int errorCode, String errorMessage, Response<JsonElement> response) {
+				String debugMessage = errorMessage + "\n";
+				if (response != null) {
+					debugMessage = debugMessage + "Received:\n'" + response.body().getAsString() + "'\n\n";
+					try {
+						debugMessage = debugMessage + "Received:\n'" + response.errorBody().string() + "'";
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				Intent i = new Intent(ContinuousCaptureActivity.this, DebugActivity.class);
+				i.putExtra("debug", debugMessage);
+				ContinuousCaptureActivity.this.startActivity(i);
+			}
+		});
 	}
 
 }

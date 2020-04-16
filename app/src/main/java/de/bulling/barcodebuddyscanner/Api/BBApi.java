@@ -3,6 +3,9 @@ package de.bulling.barcodebuddyscanner.Api;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,7 +70,12 @@ public class BBApi {
 
 			@Override
 			public void onFailure(Call<JsonElement> call, Throwable t) {
-				callback.onError(BBApiCallback.ERROR_NETWORK, t.getMessage(), null);
+				if (t instanceof IOException) {
+					callback.onError(BBApiCallback.ERROR_NETWORK, t.getMessage(), null);
+				} else {
+					callback.onError(BBApiCallback.ERROR_OTHER, t.getMessage(), null);
+				}
+
 			}
 		});
 	}
@@ -78,5 +86,21 @@ public class BBApi {
 
 	public void postBarcode(String barcode, final BBApiCallback callback) {
 		processResponse(REQUEST_ACTION_BARCODE, this.bbApi.postBarcode(this.apiKey, barcode), callback);
+	}
+
+
+
+	public void postBarcodeDebug(String barcode, final BBApiCallback callback) {
+		this.bbApi.postBarcodeDebug(this.apiKey, barcode).enqueue(new Callback<ResponseBody>() {
+			@Override
+			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+				callback.onResult(response);
+			}
+
+			@Override
+			public void onFailure(Call<ResponseBody> call, Throwable t) {
+				int x=0;
+			}
+		});
 	}
 }
