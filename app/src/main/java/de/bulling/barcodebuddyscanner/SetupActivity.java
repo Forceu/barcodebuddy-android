@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,8 +37,9 @@ public class SetupActivity extends AppCompatActivity {
 	private ProgressBar progressBar;
 	private EditText    editTextUrl;
 	private EditText    editTextApi;
+	private CheckBox    checkBoxSsl;
 
-	private final int MIN_BBUDDY_VERSION = 1500;
+	private final int MIN_BBUDDY_VERSION = 1501;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class SetupActivity extends AppCompatActivity {
 		editTextApi.setVisibility(View.VISIBLE);
 		BBApi api;
 		try {
-			api = new BBApi(url, key);
+			api = new BBApi(url, key, checkBoxSsl.isChecked());
 		} catch (IllegalArgumentException e) {
 			processError(ERROR_OTHER, e.getMessage());
 			return;
@@ -101,7 +103,7 @@ public class SetupActivity extends AppCompatActivity {
 								SetupActivity.this.getString(R.string.tut_connected),
 								Toast.LENGTH_LONG).show();
 
-						SharedPrefHelper.saveApiDetails(SetupActivity.this, url, key);
+						SharedPrefHelper.saveApiDetails(SetupActivity.this, url, key, checkBoxSsl.isChecked());
 						SetupActivity.this.finish();
 					} else
 						processError(ERROR_OTHER, SetupActivity.this.getString(R.string.error_too_old));
@@ -124,6 +126,7 @@ public class SetupActivity extends AppCompatActivity {
 		editTextApi   = findViewById(R.id.editText2);
 		buttonConnect = findViewById(R.id.button2);
 		buttonScan    = findViewById(R.id.button);
+		checkBoxSsl   = findViewById(R.id.checkBox);
 		setUpButtons();
 	}
 
@@ -147,6 +150,7 @@ public class SetupActivity extends AppCompatActivity {
 				buttonConnect.setEnabled(false);
 				editTextApi.setEnabled(false);
 				editTextUrl.setEnabled(false);
+				checkBoxSsl.setEnabled(false);
 				ensureTrailingSlashExists(editTextUrl);
 				processConnection(editTextUrl.getText().toString(), editTextApi.getText().toString());
 			}
@@ -175,13 +179,15 @@ public class SetupActivity extends AppCompatActivity {
 				break;
 		}
 		progressBar.setVisibility(View.GONE);
-		buttonConnect.setEnabled(true);
 		buttonConnect.setVisibility(View.VISIBLE);
+		checkBoxSsl.setVisibility(View.VISIBLE);
+		buttonConnect.setEnabled(true);
 		editTextUrl.setEnabled(true);
 		editTextApi.setEnabled(true);
+		checkBoxSsl.setEnabled(true);
 		if (errorMessage != null)
 			Toast.makeText(SetupActivity.this,
-					SetupActivity.this.getString(R.string.error_cnc) + errorMessage,
+					SetupActivity.this.getString(R.string.error_cnc) +" " + errorMessage,
 					Toast.LENGTH_LONG).show();
 	}
 

@@ -42,7 +42,9 @@ public class ContinuousCaptureActivity extends Activity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		bbApi = new BBApi(preferences.getString("url", null), preferences.getString("key", null));
+		bbApi = new BBApi(preferences.getString("url", null),
+				preferences.getString("key", null),
+				preferences.getBoolean("unsafe", false));
 
 		barcodeView = findViewById(R.id.barcode_scanner);
 		barcodeView.initializeFromIntent(getIntent());

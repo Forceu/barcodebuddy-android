@@ -13,6 +13,7 @@
     <string name="e_invalidqr">Invalid QR code, no setup info found.</string>
     <string name="error_too_old">Please update your Barcode Buddy server.</string>
     <string name="tut_connected">Connected! Tap on the barcode picture to start scanning.</string>
-    <string name="error_cnc">\"Could not connect to server!</string>
+    <string name="error_cnc">Could not connect to server!</string>
     <string name="tut_scan">Scan setup QR code</string>
+    <string name="ignore_invalid_ssl_certificates">Ignore invalid SSL certificates</string>
 </resources>

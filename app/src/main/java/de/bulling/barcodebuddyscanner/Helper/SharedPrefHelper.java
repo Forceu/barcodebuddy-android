@@ -10,11 +10,12 @@ public class SharedPrefHelper {
 		return preferences.getBoolean("needsSetup", true);
 	}
 
-	public static void saveApiDetails(Context context, String url, String key) {
+	public static void saveApiDetails(Context context, String url, String key, boolean isUnsafe) {
 		SharedPreferences.Editor preferences = PreferenceManager.getDefaultSharedPreferences(context).edit();
 		preferences.putBoolean("needsSetup", false);
 		preferences.putString("url", url);
 		preferences.putString("key", key);
+		preferences.putBoolean("unsafe", isUnsafe);
 		preferences.apply();
 	}
 }

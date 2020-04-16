@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,10 +21,18 @@ public class BBApi {
 	private final static int REQUEST_SYSTEM_INFO    = 0;
 	private final static int REQUEST_ACTION_BARCODE = 1;
 
-	public BBApi(final String url, final String apiKey) {
+	public BBApi(final String url, final String apiKey, final boolean isUnsafe) {
+		OkHttpClient httpClient;
+		if (isUnsafe)
+			httpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient();
+		else
+			httpClient = new OkHttpClient.Builder().build();
+
+
 		Retrofit retrofit = new Retrofit.Builder()
 				.addConverterFactory(GsonConverterFactory.create())
 				.baseUrl(url)
+				.client(httpClient)
 				.build();
 		this.apiKey = apiKey;
 		this.bbApi  = retrofit.create(BBService.class);
@@ -89,7 +98,6 @@ public class BBApi {
 	}
 
 
-
 	public void postBarcodeDebug(String barcode, final BBApiCallback callback) {
 		this.bbApi.postBarcodeDebug(this.apiKey, barcode).enqueue(new Callback<ResponseBody>() {
 			@Override
@@ -99,7 +107,7 @@ public class BBApi {
 
 			@Override
 			public void onFailure(Call<ResponseBody> call, Throwable t) {
-				int x=0;
+				int x = 0;
 			}
 		});
 	}
