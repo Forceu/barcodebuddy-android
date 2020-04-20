@@ -107,7 +107,6 @@ public class BBApi {
 
 			@Override
 			public void onFailure(Call<ResponseBody> call, Throwable t) {
-				int x = 0;
 			}
 		});
 	}

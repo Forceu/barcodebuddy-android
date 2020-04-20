@@ -9,12 +9,19 @@ android {
         versionCode 4
         versionName "0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "boolean", "IS_DEBUG", "true"
     }
     buildTypes {
         release {
             minifyEnabled false
+            buildConfigField "boolean", "IS_DEBUG", "false"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+
+        debugPublic {
+        }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -27,6 +34,9 @@ repositories {
 }
 
 dependencies {
+    def acraVersion = '5.5.0'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-dialog:$acraVersion"
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'

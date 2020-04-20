@@ -32,7 +32,7 @@ public class ContinuousCaptureActivity extends Activity {
 	private String               lastBarcode  = null;
 	private BBApi                bbApi        = null;
 
-	private final boolean IS_DEBUG = false;
+	private final boolean IS_DEBUG = de.bulling.barcodebuddyscanner.BuildConfig.IS_DEBUG;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

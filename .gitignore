@@ -99,3 +99,4 @@ lint/tmp/
 .externalNativeBuild
 .cxx
 /logo/
+app/src/main/java/de/bulling/barcodebuddyscanner/Helper/Secrets.java
