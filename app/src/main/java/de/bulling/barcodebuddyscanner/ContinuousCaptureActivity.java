@@ -152,7 +152,8 @@ public class ContinuousCaptureActivity extends Activity {
 			public void onError(int errorCode, String errorMessage, Response<JsonElement> response) {
 				String debugMessage = errorMessage + "\n";
 				if (response != null) {
-					debugMessage = debugMessage + "Received:\n'" + response.body().getAsString() + "'\n\n";
+					if (response.body() != null)
+						debugMessage = debugMessage + "Received:\n'" + response.body().getAsString() + "'\n\n";
 					try {
 						debugMessage = debugMessage + "Received:\n'" + response.errorBody().string() + "'";
 					} catch (Exception e) {

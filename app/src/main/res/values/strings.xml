@@ -18,4 +18,5 @@
     <string name="ignore_invalid_ssl_certificates">Ignore invalid SSL certificates</string>
     <string name="crashed">Unexpected Error</string>
     <string name="crashed_t">Sorry, Barcode Buddy has crashed. Please click on okay to send us an email for debugging. You can also add info in the field below.</string>
+    <string name="log_out">Log out</string>
 </resources>

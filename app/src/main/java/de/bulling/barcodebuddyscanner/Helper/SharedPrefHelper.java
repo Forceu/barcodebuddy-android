@@ -18,4 +18,12 @@ public class SharedPrefHelper {
 		preferences.putBoolean("unsafe", isUnsafe);
 		preferences.apply();
 	}
+
+
+	public static void clearSettings(Context context) {
+		SharedPreferences.Editor preferences = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		preferences.clear();
+		preferences.putBoolean("needsSetup", true);
+		preferences.apply();
+	}
 }
