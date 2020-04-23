@@ -15,7 +15,8 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 import de.bulling.barcodebuddyscanner.Api.BBApi;
@@ -116,14 +117,34 @@ public class ContinuousCaptureActivity extends Activity {
 			@Override
 			public void onResult(Object result) {
 				Response<ResponseBody> response     = (Response<ResponseBody>) result;
-				String                 debugMessage = "Received:\n\n'";
-				try {
-					debugMessage = debugMessage + response.body().string() + "'";
-				} catch (IOException e) {
-					e.printStackTrace();
+				StringBuilder          debugMessage = new StringBuilder();
+				if (response.body() == null) {
+					debugMessage.append("Received Body is null.\n");
+				} else {
+					debugMessage.append("Received Body:\n\n'");
+					try {
+						debugMessage.append(response.body().string());
+						debugMessage.append("'\n\n");
+					} catch (Exception e) {
+						debugMessage.append(convertStacktraceToString(e));
+						e.printStackTrace();
+					}
 				}
+				if (response.errorBody() == null) {
+					debugMessage.append("Received Error Body is null.\n");
+				} else {
+					debugMessage.append("Received Error Body:\n\n'");
+					try {
+						debugMessage.append(response.errorBody().string());
+						debugMessage.append("'\n\n");
+					} catch (Exception e) {
+						debugMessage.append(convertStacktraceToString(e));
+						e.printStackTrace();
+					}
+				}
+
 				Intent i = new Intent(ContinuousCaptureActivity.this, DebugActivity.class);
-				i.putExtra("debug", debugMessage);
+				i.putExtra("debug", debugMessage.toString());
 				ContinuousCaptureActivity.this.startActivity(i);
 			}
 
@@ -134,7 +155,8 @@ public class ContinuousCaptureActivity extends Activity {
 					debugMessage = debugMessage + "Received:\n'" + response.body().getAsString() + "'\n\n";
 					try {
 						debugMessage = debugMessage + "Received:\n'" + response.errorBody().string() + "'";
-					} catch (IOException e) {
+					} catch (Exception e) {
+						debugMessage = debugMessage + convertStacktraceToString(e);
 						e.printStackTrace();
 					}
 				}
@@ -143,6 +165,12 @@ public class ContinuousCaptureActivity extends Activity {
 				ContinuousCaptureActivity.this.startActivity(i);
 			}
 		});
+	}
+
+	private String convertStacktraceToString(Exception e) {
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		return "\n\nGot Error: " + e.getMessage() + "\n" + sw.toString() + "\n\n";
 	}
 
 }

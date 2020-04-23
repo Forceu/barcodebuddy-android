@@ -26,7 +26,10 @@ public class BBApi {
 		if (isUnsafe)
 			httpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient();
 		else
-			httpClient = new OkHttpClient.Builder().build();
+			httpClient = new OkHttpClient.Builder()
+					.followSslRedirects(true)
+					.followRedirects(true)
+					.build();
 
 
 		Retrofit retrofit = new Retrofit.Builder()
