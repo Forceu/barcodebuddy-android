@@ -24,4 +24,10 @@
     <string name="use_vibration">Vibrate</string>
     <string name="use_beep">Sound</string>
     <string name="volume">Volume</string>
+    <string name="scanner_header">Barcode Scanner</string>
+    <string name="orientation">Orientation</string>
+
+    <string name="orientation_auto">Auto</string>
+    <string name="orientation_land">Landscape</string>
+    <string name="orientation_port">Portrait</string>
 </resources>

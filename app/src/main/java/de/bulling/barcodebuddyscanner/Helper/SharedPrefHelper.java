@@ -2,7 +2,10 @@ package de.bulling.barcodebuddyscanner.Helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
+
+import de.bulling.barcodebuddyscanner.Api.BBApi;
 
 public class SharedPrefHelper {
 
@@ -44,7 +47,29 @@ public class SharedPrefHelper {
 
 	public float getBeepVolume() {
 		int volInInt = this.globalPreferences.getInt("volume_beep", 5);
-		return (volInInt/20f);
+		return (volInInt / 20f);
+	}
+
+	public final static int NO_ORIENTATION_CHANGE = -1;
+
+
+	@SuppressWarnings("ConstantConditions")
+	public int getPreferredOrientation() {
+		int orientation = Integer.parseInt(this.globalPreferences.getString("orientation", "0"));
+		switch (orientation) {
+			case 1:
+				return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+			case 2:
+				return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+			default:
+				return NO_ORIENTATION_CHANGE;
+		}
+	}
+
+	public BBApi initBBApi() {
+		return new BBApi(this.globalPreferences.getString("url", null),
+				this.globalPreferences.getString("key", null),
+				this.globalPreferences.getBoolean("unsafe", false));
 	}
 
 }

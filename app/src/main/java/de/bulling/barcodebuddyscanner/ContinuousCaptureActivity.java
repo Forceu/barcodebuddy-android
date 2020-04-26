@@ -1,11 +1,10 @@
 package de.bulling.barcodebuddyscanner;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -36,6 +35,7 @@ public class ContinuousCaptureActivity extends Activity {
 
 	private final boolean IS_DEBUG = de.bulling.barcodebuddyscanner.BuildConfig.IS_DEBUG;
 
+	@SuppressLint("SourceLockedOrientationActivity")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,20 +43,21 @@ public class ContinuousCaptureActivity extends Activity {
 		setContentView(R.layout.continuous_scan);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		bbApi = new BBApi(preferences.getString("url", null),
-				preferences.getString("key", null),
-				preferences.getBoolean("unsafe", false));
+
+		final SharedPrefHelper prefHelper = new SharedPrefHelper(this);
+		bbApi = prefHelper.initBBApi();
 
 		barcodeView = findViewById(R.id.barcode_scanner);
 		barcodeView.initializeFromIntent(getIntent());
 		barcodeView.decodeContinuous(callback);
 
 		beepManager = new BeepManager(this);
-		SharedPrefHelper prefHelper = new SharedPrefHelper(this);
 		beepManager.setBeepEnabled(prefHelper.isSoundEnabled());
 		beepManager.setVibrateEnabled(prefHelper.isVibrationEnabled());
 		beepManager.setBeepVolume(prefHelper.getBeepVolume());
+		int requestOrientation = prefHelper.getPreferredOrientation();
+		if (requestOrientation != SharedPrefHelper.NO_ORIENTATION_CHANGE)
+			this.setRequestedOrientation(requestOrientation);
 	}
 
 

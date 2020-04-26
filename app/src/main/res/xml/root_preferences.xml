@@ -21,5 +21,16 @@
             app:title="@string/volume" />
 
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/scanner_header">
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/orientation"
+            android:summary="%s"
+            android:entryValues="@array/orientation_val"
+            android:title="@string/orientation"
+            app:key="orientation" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
