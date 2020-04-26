@@ -22,6 +22,7 @@ import java.util.List;
 import de.bulling.barcodebuddyscanner.Api.BBApi;
 import de.bulling.barcodebuddyscanner.Api.BBApiCallback;
 import de.bulling.barcodebuddyscanner.Helper.BeepManager;
+import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
@@ -52,6 +53,10 @@ public class ContinuousCaptureActivity extends Activity {
 		barcodeView.decodeContinuous(callback);
 
 		beepManager = new BeepManager(this);
+		SharedPrefHelper prefHelper = new SharedPrefHelper(this);
+		beepManager.setBeepEnabled(prefHelper.isSoundEnabled());
+		beepManager.setVibrateEnabled(prefHelper.isVibrationEnabled());
+		beepManager.setBeepVolume(prefHelper.getBeepVolume());
 	}
 
 

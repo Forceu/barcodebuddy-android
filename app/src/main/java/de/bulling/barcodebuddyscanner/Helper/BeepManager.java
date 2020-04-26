@@ -16,13 +16,13 @@ public final class BeepManager {
 
 	private static final String TAG = BeepManager.class.getSimpleName();
 
-	private static final float BEEP_VOLUME      = 0.10f;
-	private static final long  VIBRATE_DURATION = 200L;
+	private static final long VIBRATE_DURATION = 200L;
 
 	private final Context context;
 
 	private boolean beepEnabled    = true;
 	private boolean vibrateEnabled = false;
+	private float   beepVolume     = 0.25f;
 
 	private SoundPool soundPool;
 	private int       beepSound;
@@ -59,6 +59,12 @@ public final class BeepManager {
 		this.beepEnabled = beepEnabled;
 	}
 
+
+	public void setBeepVolume(float volume) {
+		this.beepVolume = volume;
+	}
+
+
 	public boolean isVibrateEnabled() {
 		return vibrateEnabled;
 	}
@@ -84,6 +90,6 @@ public final class BeepManager {
 
 
 	public void playBeepSound() {
-		soundPool.play(beepSound, 1, 1, 1, 0, 1);
+		soundPool.play(beepSound, beepVolume, beepVolume, 1, 0, 1);
 	}
 }

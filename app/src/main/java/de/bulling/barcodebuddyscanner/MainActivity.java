@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 		setupUI();
 
 		if (SharedPrefHelper.noApiDetailsSaved(this))
-			showSettingsScreen();
+			showSetupScreen();
 	}
 
 
@@ -58,18 +58,24 @@ public class MainActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// At the moment only one item, but leaving switch anyways
 		switch (item.getItemId()) {
+
 			case R.id.action_logout:
 				SharedPrefHelper.clearSettings(MainActivity.this);
-				showSettingsScreen();
+				showSetupScreen();
 				return true;
+
+			case R.id.action_settings:
+				Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+				startActivity(i);
+				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
 
-	private void showSettingsScreen() {
+	private void showSetupScreen() {
 		startActivityForResult(new Intent(MainActivity.this, SetupActivity.class), RESULT_SETUP_COMPLETE);
 	}
 

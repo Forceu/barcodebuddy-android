@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/feedback_header">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="use_vibration"
+            app:title="@string/use_vibration" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="use_beep"
+            app:title="@string/use_beep" />
+
+        <SeekBarPreference
+            android:max="20"
+            app:defaultValue="5"
+            app:dependency="use_beep"
+            app:key="volume_beep"
+            app:title="@string/volume" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
