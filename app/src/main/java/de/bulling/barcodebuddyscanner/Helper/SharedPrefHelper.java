@@ -45,6 +45,11 @@ public class SharedPrefHelper {
 		return this.globalPreferences.getBoolean("use_beep", true);
 	}
 
+	public static boolean isBtScannerEnabled(Context context) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return preferences.getBoolean("use_bluetooth_scanner", false);
+	}
+
 	public float getBeepVolume() {
 		int volInInt = this.globalPreferences.getInt("volume_beep", 5);
 		return (volInInt / 20f);

@@ -30,4 +30,7 @@
     <string name="orientation_auto">Auto</string>
     <string name="orientation_land">Landscape</string>
     <string name="orientation_port">Portrait</string>
+    <string name="use_bluetooth_scanner">Enable Bluetooth Barcode Scanner</string>
+    <string name="use_bluetooth_scanner_s">Scan a barcode with a connected physical scanner</string>
+    <string name="use_bluetooth_barcode_scanner_in_this_menu">Use Bluetooth barcode scanner in this menu</string>
 </resources>

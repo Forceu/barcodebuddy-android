@@ -28,8 +28,15 @@
             android:entries="@array/orientation"
             android:summary="%s"
             android:entryValues="@array/orientation_val"
-            android:title="@string/orientation"
+            app:title="@string/orientation"
             app:key="orientation" />
+
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="use_bluetooth_scanner"
+            app:title="@string/use_bluetooth_scanner"
+            app:summary="@string/use_bluetooth_scanner_s"/>
 
     </PreferenceCategory>
 

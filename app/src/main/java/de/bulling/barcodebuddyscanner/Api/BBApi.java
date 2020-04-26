@@ -64,6 +64,9 @@ public class BBApi {
 					callback.onResult(result);
 				} else {
 					switch (response.raw().code()) {
+						case 400:
+							callback.onError(BBApiCallback.ERROR_OTHER, "Illegal API Parameter", response);
+							break;
 						case 401:
 							callback.onError(BBApiCallback.ERROR_UNAUTHORIZED, "Invalid API key", response);
 							break;
