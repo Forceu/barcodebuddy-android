@@ -1,0 +1,28 @@
+Categories:
+  - Connectivity
+License: GPL-3.0-only
+SourceCode: https://github.com/Forceu/barcodebuddy-android
+Donate: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=donate@bulling.mobi&lc=US&item_name=BarcodeBuddy&no_note=0&cn=&currency_code=EUR&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted
+LiberapayID: '1648456'
+
+Summary: App for Barcode Buddy
+Description: |-
+    Use this app automatically send barcodes to barcode buddy! Easy setup in less than 10 seconds.
+
+    More about the Barcode Buddy for Grocy project: https://github.com/Forceu/barcodebuddy/
+
+RepoType: git
+Repo: https://github.com/Forceu/barcodebuddy-android
+
+Builds:
+  - versionName: v0.3.0
+    versionCode: 1
+    commit: v0.3.0
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version %v
+UpdateCheckMode: Tags
+CurrentVersion: 0.3.0
+CurrentVersionCode: 6
