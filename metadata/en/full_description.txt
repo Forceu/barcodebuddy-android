@@ -1,0 +1,4 @@
+Use this app automatically send barcodes to barcode buddy! Easy setup in less than 10 seconds.
+
+More about the Barcode Buddy for Grocy project: https://github.com/Forceu/barcodebuddy/
+
