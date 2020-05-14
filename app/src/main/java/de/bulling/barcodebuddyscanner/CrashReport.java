@@ -9,8 +9,6 @@ import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
 import org.acra.data.StringFormat;
 
-import de.bulling.barcodebuddyscanner.Helper.Secrets;
-
 
 @AcraCore(buildConfigClass = BuildConfig.class,
 		reportFormat = StringFormat.KEY_VALUE_LIST)
