@@ -14,7 +14,7 @@ import de.bulling.barcodebuddyscanner.Helper.Secrets;
 
 @AcraCore(buildConfigClass = BuildConfig.class,
 		reportFormat = StringFormat.KEY_VALUE_LIST)
-@AcraMailSender(mailTo = Secrets.BUGREPORT_EMAIL)
+@AcraMailSender(mailTo = "support-bb@bulling.mobi")
 @AcraDialog(resText = R.string.crashed,
 		resCommentPrompt = R.string.crashed_t)
 public class CrashReport extends Application {
