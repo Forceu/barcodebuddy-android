@@ -1,6 +1,6 @@
 # Official Android app for Barcode Buddy
 
-Download the app on the [Google PlayStore](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner)
+Download the app on the [Google PlayStore](https://play.google.com/store/apps/details?id=de.bulling.barcodebuddyscanner) or [F-Droid](https://f-droid.org/en/packages/de.bulling.barcodebuddyscanner/)
 
 
 ## Usage
