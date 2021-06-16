@@ -71,7 +71,8 @@ public class BBApi {
 							callback.onError(BBApiCallback.ERROR_UNAUTHORIZED, "Invalid API key", response);
 							break;
 						case 404:
-							callback.onError(BBApiCallback.ERROR_OTHER, "Invalid URL. Please make sure that the URL is correct and URL rewriting enabled.", response);
+							callback.onError(BBApiCallback.ERROR_OTHER, "Invalid URL or incorrect response. Please make sure that the URL is correct and URL rewriting enabled.",
+									response);
 							break;
 						case 500:
 							callback.onError(BBApiCallback.ERROR_OTHER, "Server error", response);

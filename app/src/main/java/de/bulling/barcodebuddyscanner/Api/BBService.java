@@ -20,7 +20,6 @@ public interface BBService {
 	Call<JsonElement> postBarcode(@Header("BBUDDY-API-KEY") String authorization, @Field("barcode") String barcode);
 
 
-
 	@FormUrlEncoded
 	@POST("action/scan")
 	Call<ResponseBody> postBarcodeDebug(@Header("BBUDDY-API-KEY") String authorization, @Field("barcode") String barcode);

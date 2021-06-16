@@ -159,7 +159,7 @@ public class SetupActivity extends AppCompatActivity {
 		privacyPolicy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String url = "https://www.bulling.mobi/en/privacypolicy.html";
+				String url = "https://www.bulling-it.de/en/privacypolicy.html";
 				Intent i   = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				startActivity(i);
