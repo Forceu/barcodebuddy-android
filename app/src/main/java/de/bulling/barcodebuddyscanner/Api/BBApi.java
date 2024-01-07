@@ -20,6 +20,7 @@ public class BBApi {
 
 	private final static int REQUEST_SYSTEM_INFO    = 0;
 	private final static int REQUEST_ACTION_BARCODE = 1;
+	private final static int REQUEST_SET_MODE       = 2;
 
 	public BBApi(final String url, final String apiKey, final boolean isUnsafe) {
 		OkHttpClient httpClient;
@@ -52,6 +53,9 @@ public class BBApi {
 						switch (request) {
 							case REQUEST_SYSTEM_INFO:
 								result = (Integer) responseBody.get("data").getAsJsonObject().get("version_int").getAsInt();
+								break;
+							case REQUEST_SET_MODE:
+								result = (String) responseBody.get("result").getAsJsonObject().get("result").getAsString();
 								break;
 							case REQUEST_ACTION_BARCODE:
 								result = (String) responseBody.get("data").getAsJsonObject().get("result").getAsString();
@@ -104,6 +108,9 @@ public class BBApi {
 		processResponse(REQUEST_ACTION_BARCODE, this.bbApi.postBarcode(this.apiKey, barcode), callback);
 	}
 
+	public void setMode(int mode, final BBApiCallback callback) {
+		processResponse(REQUEST_SET_MODE, this.bbApi.setMode(this.apiKey, mode), callback);
+	}
 
 	public void postBarcodeDebug(String barcode, final BBApiCallback callback) {
 		this.bbApi.postBarcodeDebug(this.apiKey, barcode).enqueue(new Callback<ResponseBody>() {

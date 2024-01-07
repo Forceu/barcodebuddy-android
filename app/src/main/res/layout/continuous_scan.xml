@@ -18,7 +18,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/buttonsLayout"
-        android:layout_toStartOf="@+id/centerHorizont"/>
+        android:gravity="center_horizontal"
+        android:background="#000000">
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_mode"
+            android:text="@string/b_mode" />
+    </LinearLayout>
 
     <View
         android:layout_width="0dp"

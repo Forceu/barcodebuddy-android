@@ -12,7 +12,7 @@ import org.acra.data.StringFormat;
 
 @AcraCore(buildConfigClass = BuildConfig.class,
 		reportFormat = StringFormat.KEY_VALUE_LIST)
-@AcraMailSender(mailTo = "support-bb@bulling.mobi")
+@AcraMailSender(mailTo = "support@bulling-it.de")
 @AcraDialog(resText = R.string.crashed,
 		resCommentPrompt = R.string.crashed_t)
 public class CrashReport extends Application {

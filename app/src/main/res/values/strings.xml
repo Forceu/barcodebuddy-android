@@ -33,4 +33,14 @@
     <string name="use_bluetooth_scanner">Enable Bluetooth Barcode Scanner</string>
     <string name="use_bluetooth_scanner_s">Scan a barcode with a connected physical scanner</string>
     <string name="use_bluetooth_barcode_scanner_in_this_menu">Use Bluetooth barcode scanner in this menu</string>
+    <string name="b_mode">Set Mode</string>
+
+    <string name="mode_p">Purchase</string>
+    <string name="mode_c">Consume</string>
+    <string name="mode_o">Open</string>
+    <string name="mode_i">Inventory</string>
+    <string name="mode_s">Add to shoppinglist</string>
+    <string name="mode_ca">Consume All</string>
+    <string name="mode_cs">Consume (spoiled)</string>
+
 </resources>

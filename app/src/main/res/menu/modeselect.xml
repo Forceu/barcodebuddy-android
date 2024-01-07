@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/modesel_p"
+        android:title="@string/mode_p" />
+    <item
+        android:id="@+id/modesel_c"
+        android:title="@string/mode_c" />
+    <item
+        android:id="@+id/modesel_o"
+        android:title="@string/mode_o" />
+    <item
+        android:id="@+id/modesel_i"
+        android:title="@string/mode_i" />
+    <item
+        android:id="@+id/modesel_s"
+        android:title="@string/mode_s" />
+    <item
+        android:id="@+id/modesel_ca"
+        android:title="@string/mode_ca" />
+    <item
+        android:id="@+id/modesel_cs"
+        android:title="@string/mode_cs" />
+</menu>

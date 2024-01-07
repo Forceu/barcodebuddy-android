@@ -3,8 +3,13 @@ package de.bulling.barcodebuddyscanner;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.PopupMenu;
 
 import com.google.zxing.ResultPoint;
 import com.journeyapps.barcodescanner.BarcodeCallback;
@@ -19,6 +24,7 @@ import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
 public class ContinuousCaptureActivity extends Activity {
 	private DecoratedBarcodeView barcodeView;
+	private Button               modeButton;
 	private long                 lastScanTime = 0;
 	private String               lastBarcode  = null;
 
@@ -37,6 +43,9 @@ public class ContinuousCaptureActivity extends Activity {
 		apiConnection = new ApiConnection(this, IS_DEBUG);
 
 		barcodeView = findViewById(R.id.barcode_scanner);
+		modeButton = findViewById(R.id.button_mode);
+		barcodeView.setStatusText("");
+		modeButton.setOnClickListener(v -> showOnClickMenu(getApplicationContext(),v));
 		barcodeView.initializeFromIntent(getIntent());
 		barcodeView.decodeContinuous(callback);
 
@@ -45,6 +54,41 @@ public class ContinuousCaptureActivity extends Activity {
 			this.setRequestedOrientation(requestOrientation);
 	}
 
+	private void showOnClickMenu(Context context, View view) {
+		PopupMenu    popupMenu = new PopupMenu(context, view);
+		MenuInflater inflater  = popupMenu.getMenuInflater();
+		inflater.inflate(R.menu.modeselect, popupMenu.getMenu());
+
+		popupMenu.setOnMenuItemClickListener(item -> {
+			switch (item.getItemId()) {
+				case R.id.modesel_p:
+					apiConnection.setMode(2);
+					return true;
+				case R.id.modesel_c:
+					apiConnection.setMode(0);
+					return true;
+				case R.id.modesel_o:
+					apiConnection.setMode(3);
+					return true;
+				case R.id.modesel_i:
+					apiConnection.setMode(4);
+					return true;
+				case R.id.modesel_s:
+					apiConnection.setMode(5);
+					return true;
+				case R.id.modesel_ca:
+					apiConnection.setMode(6);
+					return true;
+				case R.id.modesel_cs:
+					apiConnection.setMode(1);
+					return true;
+				default:
+					return false;
+			}
+		});
+
+		popupMenu.show();
+	}
 
 	private BarcodeCallback callback = new BarcodeCallback() {
 		@Override
