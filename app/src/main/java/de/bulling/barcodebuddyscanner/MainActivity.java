@@ -119,7 +119,8 @@ public class MainActivity extends AppCompatActivity {
 				keycode == KeyEvent.KEYCODE_NUMPAD_DOT ||
 				keycode == KeyEvent.KEYCODE_NUMPAD_ENTER ||
 				keycode == KeyEvent.KEYCODE_ENTER ||
-				keycode == KeyEvent.KEYCODE_MINUS);
+				keycode == KeyEvent.KEYCODE_MINUS||
+				keycode == KeyEvent.KEYCODE_SEMICOLON);
 	}
 
 	private void processKeypress(final KeyEvent event, final int keycode) {
