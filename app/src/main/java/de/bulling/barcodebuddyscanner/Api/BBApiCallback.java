@@ -1,9 +1,5 @@
 package de.bulling.barcodebuddyscanner.Api;
 
-import com.google.gson.JsonElement;
-
-import retrofit2.Response;
-
 public interface BBApiCallback {
 
 	int ERROR_NETWORK      = 0;
@@ -12,6 +8,5 @@ public interface BBApiCallback {
 
 	void onResult(Object result);
 
-	void onError(int errorCode, String errorMessage, Response<JsonElement> response);
-
+	void onError(int errorCode, String errorMessage, Integer statusCode);
 }

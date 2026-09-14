@@ -4,12 +4,16 @@ package de.bulling.barcodebuddyscanner;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.zxing.ResultPoint;
 import com.journeyapps.barcodescanner.BarcodeCallback;
@@ -19,6 +23,7 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import java.util.List;
 
 import de.bulling.barcodebuddyscanner.Helper.ApiConnection;
+import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
 
@@ -40,6 +45,10 @@ public class ContinuousCaptureActivity extends Activity {
 		setContentView(R.layout.continuous_scan);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+		// ACCESS_LOCAL_NETWORK is optional: if denied, connecting to a
+		// Barcode Buddy server on the same LAN might not succeed, but we
+		// still go ahead and create the API instance either way.
+		PermissionHelper.requestLocalNetworkPermissionIfNeeded(this);
 		apiConnection = new ApiConnection(this, IS_DEBUG);
 
 		barcodeView = findViewById(R.id.barcode_scanner);
@@ -115,7 +124,33 @@ public class ContinuousCaptureActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		barcodeView.resume();
+		startScanningIfCameraPermitted();
+	}
+
+	/**
+	 * The camera permission is required for scanning to work at all, so unlike
+	 * ACCESS_LOCAL_NETWORK this one blocks: we only resume the barcode view once
+	 * it's actually granted.
+	 */
+	private void startScanningIfCameraPermitted() {
+		if (PermissionHelper.hasCameraPermission(this)) {
+			barcodeView.resume();
+		} else {
+			PermissionHelper.requestCameraPermission(this);
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == PermissionHelper.REQUEST_CODE_CAMERA) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				barcodeView.resume();
+			} else {
+				Toast.makeText(this, R.string.error_camera_permission_denied, Toast.LENGTH_LONG).show();
+				finish();
+			}
+		}
 	}
 
 	@Override

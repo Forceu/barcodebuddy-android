@@ -1,127 +1,177 @@
 package de.bulling.barcodebuddyscanner.Api;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import javax.net.ssl.HttpsURLConnection;
 
 public class BBApi {
 
-	private final BBService bbApi;
-	private final String    apiKey;
+	private final String baseUrl;
+	private final String apiKey;
+	private final boolean isUnsafe;
 
-	private final static int REQUEST_SYSTEM_INFO    = 0;
-	private final static int REQUEST_ACTION_BARCODE = 1;
-	private final static int REQUEST_SET_MODE       = 2;
+	private final ExecutorService executor = Executors.newFixedThreadPool(4);
+	private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+	private static final int REQUEST_SYSTEM_INFO = 0;
+	private static final int REQUEST_ACTION_BARCODE = 1;
+	private static final int REQUEST_SET_MODE = 2;
 
 	public BBApi(final String url, final String apiKey, final boolean isUnsafe) {
-		OkHttpClient httpClient;
-		if (isUnsafe)
-			httpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient();
-		else
-			httpClient = new OkHttpClient.Builder()
-					.followSslRedirects(true)
-					.followRedirects(true)
-					.build();
-
-
-		Retrofit retrofit = new Retrofit.Builder()
-				.addConverterFactory(GsonConverterFactory.create())
-				.baseUrl(url)
-				.client(httpClient)
-				.build();
+		String formattedUrl = url != null ? url.trim() : "";
+		if (!formattedUrl.endsWith("/")) {
+			formattedUrl += "/";
+		}
+		this.baseUrl = formattedUrl;
 		this.apiKey = apiKey;
-		this.bbApi  = retrofit.create(BBService.class);
+		this.isUnsafe = isUnsafe;
 	}
 
-	private void processResponse(final int request, final Call<JsonElement> result, final BBApiCallback callback) {
-		result.enqueue(new Callback<JsonElement>() {
-			@Override
-			public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-				if (response.isSuccessful()) {
+
+	private void executeRequest(final int requestType, final String endpoint, final String method,
+	                            final Map<String, String> params, final BBApiCallback callback) {
+		executor.execute(() -> {
+			HttpURLConnection connection = null;
+			try {
+				String fullUrl = baseUrl + endpoint;
+
+				URL url = new URL(fullUrl);
+				connection = (HttpURLConnection) url.openConnection();
+				connection.setRequestMethod(method);
+				connection.setConnectTimeout(15000);
+				connection.setReadTimeout(15000);
+
+				// Set API Key Header
+				if (apiKey != null) {
+					connection.setRequestProperty("BBUDDY-API-KEY", apiKey);
+				}
+
+				// Apply Unsafe SSL Configuration if requested
+				if (isUnsafe && connection instanceof HttpsURLConnection) {
+					UnsafeSslHelper.applyUnsafeSsl((HttpsURLConnection) connection);
+				}
+
+				// Handle Form-URL-Encoded POST body
+				if ("POST".equalsIgnoreCase(method) && params != null && !params.isEmpty()) {
+					connection.setDoOutput(true);
+					connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+					StringBuilder postData = new StringBuilder();
+					for (Map.Entry<String, String> param : params.entrySet()) {
+						if (postData.length() != 0) postData.append('&');
+						postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+						postData.append('=');
+						postData.append(URLEncoder.encode(param.getValue(), "UTF-8"));
+					}
+
+					byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8);
+					try (OutputStream os = connection.getOutputStream()) {
+						os.write(postDataBytes);
+					}
+				}
+
+				final int statusCode = connection.getResponseCode();
+
+				if (statusCode >= 200 && statusCode < 300) {
+					InputStream is = connection.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+					StringBuilder responseBuilder = new StringBuilder();
+					String line;
+					while ((line = reader.readLine()) != null) {
+						responseBuilder.append(line);
+					}
+					reader.close();
+
+					JsonElement jsonElement = JsonParser.parseString(responseBuilder.toString());
+					JsonObject responseBody = jsonElement.getAsJsonObject();
+
 					Object result = null;
-					try {
-						JsonObject responseBody = response.body().getAsJsonObject();
-						switch (request) {
-							case REQUEST_SYSTEM_INFO:
-								result = (Integer) responseBody.get("data").getAsJsonObject().get("version_int").getAsInt();
+					switch (requestType) {
+						case REQUEST_SYSTEM_INFO:
+							result = responseBody.get("data").getAsJsonObject().get("version_int").getAsInt();
+							break;
+						case REQUEST_SET_MODE:
+							result = responseBody.get("result").getAsJsonObject().get("result").getAsString();
+							break;
+						case REQUEST_ACTION_BARCODE:
+							result = responseBody.get("data").getAsJsonObject().get("result").getAsString();
+							break;
+					}
+
+					final Object finalResult = result;
+					mainHandler.post(() -> callback.onResult(finalResult));
+
+				} else {
+					mainHandler.post(() -> {
+						switch (statusCode) {
+							case 400:
+								callback.onError(BBApiCallback.ERROR_OTHER, "Illegal API Parameter", statusCode);
 								break;
-							case REQUEST_SET_MODE:
-								result = (String) responseBody.get("result").getAsJsonObject().get("result").getAsString();
+							case 401:
+								callback.onError(BBApiCallback.ERROR_UNAUTHORIZED, "Invalid API key", statusCode);
 								break;
-							case REQUEST_ACTION_BARCODE:
-								result = (String) responseBody.get("data").getAsJsonObject().get("result").getAsString();
+							case 404:
+								callback.onError(BBApiCallback.ERROR_OTHER, "Invalid URL or incorrect response. Please make sure that the URL is correct and URL rewriting enabled.", statusCode);
+								break;
+							case 500:
+								callback.onError(BBApiCallback.ERROR_OTHER, "Server error", statusCode);
+								break;
+							default:
+								callback.onError(BBApiCallback.ERROR_OTHER, "Unknown error occurred. Please check URL.", statusCode);
 								break;
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						callback.onError(BBApiCallback.ERROR_OTHER, e.getMessage(), response);
-					}
-					callback.onResult(result);
-				} else {
-					switch (response.raw().code()) {
-						case 400:
-							callback.onError(BBApiCallback.ERROR_OTHER, "Illegal API Parameter", response);
-							break;
-						case 401:
-							callback.onError(BBApiCallback.ERROR_UNAUTHORIZED, "Invalid API key", response);
-							break;
-						case 404:
-							callback.onError(BBApiCallback.ERROR_OTHER, "Invalid URL or incorrect response. Please make sure that the URL is correct and URL rewriting enabled.",
-									response);
-							break;
-						case 500:
-							callback.onError(BBApiCallback.ERROR_OTHER, "Server error", response);
-							break;
-						default:
-							callback.onError(BBApiCallback.ERROR_OTHER, "Unknown error occurred. Please check URL.", response);
-							break;
-					}
+					});
 				}
-			}
-
-			@Override
-			public void onFailure(Call<JsonElement> call, Throwable t) {
-				if (t instanceof IOException) {
-					callback.onError(BBApiCallback.ERROR_NETWORK, t.getMessage(), null);
-				} else {
-					callback.onError(BBApiCallback.ERROR_OTHER, t.getMessage(), null);
+			} catch (Exception e) {
+				e.printStackTrace();
+				final String errorMessage = e.getMessage();
+				mainHandler.post(() -> {
+					if (e instanceof java.io.IOException) {
+						callback.onError(BBApiCallback.ERROR_NETWORK, errorMessage, null);
+					} else {
+						callback.onError(BBApiCallback.ERROR_OTHER, errorMessage, null);
+					}
+				});
+			} finally {
+				if (connection != null) {
+					connection.disconnect();
 				}
-
 			}
 		});
 	}
 
 	public void getVersionInfo(final BBApiCallback callback) {
-		processResponse(REQUEST_SYSTEM_INFO, this.bbApi.getSystemInfo(this.apiKey), callback);
+		executeRequest(REQUEST_SYSTEM_INFO, "system/info", "GET", null, callback);
 	}
 
 	public void postBarcode(String barcode, final BBApiCallback callback) {
-		processResponse(REQUEST_ACTION_BARCODE, this.bbApi.postBarcode(this.apiKey, barcode), callback);
+		Map<String, String> params = new HashMap<>();
+		params.put("barcode", barcode);
+		executeRequest(REQUEST_ACTION_BARCODE, "action/scan", "POST", params, callback);
 	}
 
 	public void setMode(int mode, final BBApiCallback callback) {
-		processResponse(REQUEST_SET_MODE, this.bbApi.setMode(this.apiKey, mode), callback);
+		Map<String, String> params = new HashMap<>();
+		params.put("state", String.valueOf(mode));
+		executeRequest(REQUEST_SET_MODE, "state/setmode", "POST", params, callback);
 	}
 
-	public void postBarcodeDebug(String barcode, final BBApiCallback callback) {
-		this.bbApi.postBarcodeDebug(this.apiKey, barcode).enqueue(new Callback<ResponseBody>() {
-			@Override
-			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-				callback.onResult(response);
-			}
-
-			@Override
-			public void onFailure(Call<ResponseBody> call, Throwable t) {
-			}
-		});
-	}
 }

@@ -20,7 +20,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.gson.JsonElement;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -29,8 +28,8 @@ import org.json.JSONObject;
 
 import de.bulling.barcodebuddyscanner.Api.BBApi;
 import de.bulling.barcodebuddyscanner.Api.BBApiCallback;
+import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
-import retrofit2.Response;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -89,6 +88,12 @@ public class SetupActivity extends AppCompatActivity {
 		editTextUrl.setVisibility(View.VISIBLE);
 		editTextApi.setText(key);
 		editTextApi.setVisibility(View.VISIBLE);
+
+		// ACCESS_LOCAL_NETWORK is optional: if denied, connecting to a
+		// Barcode Buddy server on the same LAN might not succeed, but we
+		// still go ahead and try the connection either way.
+		PermissionHelper.requestLocalNetworkPermissionIfNeeded(this);
+
 		BBApi api;
 		try {
 			api = new BBApi(url, key, checkBoxSsl.isChecked());
@@ -114,7 +119,7 @@ public class SetupActivity extends AppCompatActivity {
 			}
 
 			@Override
-			public void onError(int errorCode, String errorMessage, Response<JsonElement> response) {
+			public void onError(int errorCode, String errorMessage, Integer statusCode) {
 				processError(errorCode, errorMessage);
 			}
 		});

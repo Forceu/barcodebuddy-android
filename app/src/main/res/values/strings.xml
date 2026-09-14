@@ -14,6 +14,7 @@
     <string name="error_too_old">Please update your Barcode Buddy server.</string>
     <string name="tut_connected">Connected! Tap on the barcode picture to start scanning.</string>
     <string name="error_cnc">Could not connect to server!</string>
+    <string name="error_camera_permission_denied">Camera permission is required to scan barcodes.</string>
     <string name="tut_scan">Scan setup QR code</string>
     <string name="ignore_invalid_ssl_certificates">Ignore invalid SSL certificates</string>
     <string name="crashed">Unexpected Error</string>

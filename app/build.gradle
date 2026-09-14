@@ -39,15 +39,14 @@ android {
 }
 
 dependencies {
-    // Networking
-    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
-    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-
     // AndroidX & Material UI
     implementation 'androidx.appcompat:appcompat:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.preference:preference:1.2.1'
+
+    // Gson for JSON parsing:
+    implementation 'com.google.code.gson:gson:2.14.0'
 
     // Barcode Scanner
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'

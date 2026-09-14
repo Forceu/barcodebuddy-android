@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import de.bulling.barcodebuddyscanner.Helper.ApiConnection;
+import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
 
         TextView info = this.findViewById(R.id.textView4);
         if (useBarcodeScanner) {
+            // ACCESS_LOCAL_NETWORK is optional: if denied, connecting to a
+            // Barcode Buddy server on the same LAN might not succeed, but we
+            // still go ahead and create the API instance either way.
+            PermissionHelper.requestLocalNetworkPermissionIfNeeded(this);
             apiConnection = new ApiConnection(this, BuildConfig.DEBUG);
             info.setVisibility(View.VISIBLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
