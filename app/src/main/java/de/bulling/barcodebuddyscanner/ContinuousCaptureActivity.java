@@ -29,7 +29,7 @@ public class ContinuousCaptureActivity extends Activity {
 	private String               lastBarcode  = null;
 
 	private       ApiConnection apiConnection = null;
-	private final boolean       IS_DEBUG      = de.bulling.barcodebuddyscanner.BuildConfig.IS_DEBUG;
+	private final boolean       IS_DEBUG      = BuildConfig.DEBUG;
 
 
 	@SuppressLint("SourceLockedOrientationActivity")
@@ -60,30 +60,31 @@ public class ContinuousCaptureActivity extends Activity {
 		inflater.inflate(R.menu.modeselect, popupMenu.getMenu());
 
 		popupMenu.setOnMenuItemClickListener(item -> {
-			switch (item.getItemId()) {
-				case R.id.modesel_p:
-					apiConnection.setMode(2);
-					return true;
-				case R.id.modesel_c:
-					apiConnection.setMode(0);
-					return true;
-				case R.id.modesel_o:
-					apiConnection.setMode(3);
-					return true;
-				case R.id.modesel_i:
-					apiConnection.setMode(4);
-					return true;
-				case R.id.modesel_s:
-					apiConnection.setMode(5);
-					return true;
-				case R.id.modesel_ca:
-					apiConnection.setMode(6);
-					return true;
-				case R.id.modesel_cs:
-					apiConnection.setMode(1);
-					return true;
-				default:
-					return false;
+			int itemId = item.getItemId();
+
+			if (itemId == R.id.modesel_p) {
+				apiConnection.setMode(2);
+				return true;
+			} else if (itemId == R.id.modesel_c) {
+				apiConnection.setMode(0);
+				return true;
+			} else if (itemId == R.id.modesel_o) {
+				apiConnection.setMode(3);
+				return true;
+			} else if (itemId == R.id.modesel_i) {
+				apiConnection.setMode(4);
+				return true;
+			} else if (itemId == R.id.modesel_s) {
+				apiConnection.setMode(5);
+				return true;
+			} else if (itemId == R.id.modesel_ca) {
+				apiConnection.setMode(6);
+				return true;
+			} else if (itemId == R.id.modesel_cs) {
+				apiConnection.setMode(1);
+				return true;
+			} else {
+				return false;
 			}
 		});
 

@@ -1,54 +1,59 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
+    namespace 'de.bulling.barcodebuddyscanner'
+    compileSdk 37
+
     defaultConfig {
         applicationId "de.bulling.barcodebuddyscanner"
         minSdkVersion 24
-        compileSdk 34
-        targetSdkVersion 34
+        targetSdkVersion 37
         versionCode 10
         versionName "0.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "boolean", "IS_DEBUG", "false"
-        signingConfig signingConfigs.debug
     }
+
+    buildFeatures {
+        // Enables BuildConfig generation locally for this module
+        buildConfig true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
-            buildConfigField "boolean", "IS_DEBUG", "false"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-
         debugPublic {
-            buildConfigField "boolean", "IS_DEBUG", "true"
+            debuggable true
+            signingConfig signingConfigs.debug
         }
-
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace 'de.bulling.barcodebuddyscanner'
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
-    implementation "ch.acra:acra-mail:5.5.0"
-    implementation "ch.acra:acra-dialog:5.5.0"
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    // Networking
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+
+    // AndroidX & Material UI
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.preference:preference:1.2.1'
+
+    // Barcode Scanner
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    // Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    implementation 'com.android.support:design:34.0.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
 }
