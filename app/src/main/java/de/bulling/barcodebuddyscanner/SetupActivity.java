@@ -1,9 +1,14 @@
 package de.bulling.barcodebuddyscanner;
 
+import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_NETWORK;
+import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_OTHER;
+import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_UNAUTHORIZED;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,6 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.google.gson.JsonElement;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -19,16 +27,10 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import de.bulling.barcodebuddyscanner.Api.BBApi;
 import de.bulling.barcodebuddyscanner.Api.BBApiCallback;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 import retrofit2.Response;
-
-import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_NETWORK;
-import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_OTHER;
-import static de.bulling.barcodebuddyscanner.Api.BBApiCallback.ERROR_UNAUTHORIZED;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -185,10 +187,12 @@ public class SetupActivity extends AppCompatActivity {
 		editTextUrl.setEnabled(true);
 		editTextApi.setEnabled(true);
 		checkBoxSsl.setEnabled(true);
-		if (errorMessage != null)
+		if (errorMessage != null) {
 			Toast.makeText(SetupActivity.this,
-					SetupActivity.this.getString(R.string.error_cnc) +" " + errorMessage,
+					SetupActivity.this.getString(R.string.error_cnc) + " " + errorMessage,
 					Toast.LENGTH_LONG).show();
+			Log.e("bbuddy error", errorMessage);
+		}
 	}
 
 
