@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import de.bulling.barcodebuddyscanner.Api.BBApi;
 import de.bulling.barcodebuddyscanner.Api.BBApiCallback;
+import de.bulling.barcodebuddyscanner.Helper.EdgeToEdgeHelper;
 import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
@@ -128,6 +129,17 @@ public class SetupActivity extends AppCompatActivity {
 	private void setupUi() {
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+
+		// Edge-to-edge is enforced when targeting SDK 35+, so push the app
+		// bar below the status bar and the scrollable content above the
+		// navigation/gesture bar, otherwise the bottom-most controls (the
+		// connect button, checkbox, privacy policy link) end up hidden
+		// behind it and can't be tapped.
+		View appBar = findViewById(R.id.app_bar_setup);
+		EdgeToEdgeHelper.applyInsetsAsPadding(appBar, false, true, false, false);
+		View setupContent = findViewById(R.id.setup_content);
+		EdgeToEdgeHelper.applyInsetsAsPadding(setupContent, true, false, true, true);
+
 		progressBar   = findViewById(R.id.progressBar);
 		editTextUrl   = findViewById(R.id.editText);
 		editTextApi   = findViewById(R.id.editText2);

@@ -2,10 +2,13 @@ package de.bulling.barcodebuddyscanner;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
+import de.bulling.barcodebuddyscanner.Helper.EdgeToEdgeHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -21,6 +24,13 @@ public class SettingsActivity extends AppCompatActivity {
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
+
+		// The preference list has no toolbar of its own (it relies on the
+		// window's action bar), but its bottom entries would otherwise end
+		// up behind the navigation/gesture bar on edge-to-edge enforced
+		// devices, making them hard or impossible to tap.
+		View settingsContainer = findViewById(R.id.settings);
+		EdgeToEdgeHelper.applyInsetsAsPadding(settingsContainer, true, false, true, true);
 	}
 
 	@Override

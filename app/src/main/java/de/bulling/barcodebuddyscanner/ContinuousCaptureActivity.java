@@ -23,6 +23,7 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import java.util.List;
 
 import de.bulling.barcodebuddyscanner.Helper.ApiConnection;
+import de.bulling.barcodebuddyscanner.Helper.EdgeToEdgeHelper;
 import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
@@ -55,6 +56,14 @@ public class ContinuousCaptureActivity extends Activity {
 		modeButton = findViewById(R.id.button_mode);
 		barcodeView.setStatusText("");
 		modeButton.setOnClickListener(v -> showOnClickMenu(getApplicationContext(),v));
+
+		// The button bar is anchored to the bottom of the screen. Since
+		// edge-to-edge is enforced when targeting SDK 35+, it would
+		// otherwise render underneath the navigation/gesture bar, making
+		// the mode button hard or impossible to tap. The camera preview
+		// itself is left alone so it still fills the whole screen.
+		View buttonsLayout = findViewById(R.id.buttonsLayout);
+		EdgeToEdgeHelper.applyInsetsAsPadding(buttonsLayout, true, false, true, true);
 		barcodeView.initializeFromIntent(getIntent());
 		barcodeView.decodeContinuous(callback);
 

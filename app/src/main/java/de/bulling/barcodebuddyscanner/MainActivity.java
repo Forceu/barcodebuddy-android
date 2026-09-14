@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import de.bulling.barcodebuddyscanner.Helper.ApiConnection;
+import de.bulling.barcodebuddyscanner.Helper.EdgeToEdgeHelper;
 import de.bulling.barcodebuddyscanner.Helper.PermissionHelper;
 import de.bulling.barcodebuddyscanner.Helper.SharedPrefHelper;
 
@@ -82,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
         });
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Pad the AppBarLayout (not the Toolbar itself) below the status
+        // bar: the AppBarLayout is wrap_content so it grows to absorb the
+        // inset, whereas the Toolbar has a fixed actionBarSize height and
+        // would just have its content (e.g. the overflow menu) squeezed
+        // out of view if padded directly.
+        View appBar = findViewById(R.id.app_bar_main);
+        EdgeToEdgeHelper.applyInsetsAsPadding(appBar, false, true, false, false);
     }
 
 
